@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { mockTaskApi as taskApi } from "@/lib/api/mock-tasks";
+import { UpdateTaskDto } from "@/types/task";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import {
@@ -16,6 +17,8 @@ import {
   Circle,
 } from "lucide-react";
 
+type TaskStatus = "TO_DO" | "IN_PROGRESS" | "DONE";
+
 export default function EditTaskPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -24,9 +27,7 @@ export default function EditTaskPage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState<"TO_DO" | "IN_PROGRESS" | "DONE">(
-    "TO_DO"
-  );
+  const [status, setStatus] = useState<TaskStatus>("TO_DO");
   const [errors, setErrors] = useState<{ title?: string }>({});
 
   const {
@@ -48,7 +49,7 @@ export default function EditTaskPage() {
   }, [task]);
 
   const mutation = useMutation({
-    mutationFn: (data: any) => taskApi.updateTask(id, data),
+    mutationFn: (data: UpdateTaskDto) => taskApi.updateTask(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["task", id] });
@@ -64,7 +65,7 @@ export default function EditTaskPage() {
         router.push("/");
       }, 100);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to update task");
     },
   });
@@ -118,7 +119,14 @@ export default function EditTaskPage() {
     );
   }
 
-  const statusOptions = [
+  const statusOptions: {
+    value: TaskStatus;
+    label: string;
+    icon: React.ElementType;
+    color: string;
+    bgColor: string;
+    borderColor: string;
+  }[] = [
     {
       value: "TO_DO",
       label: "To Do",
@@ -255,7 +263,7 @@ export default function EditTaskPage() {
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => setStatus(option.value as any)}
+                      onClick={() => setStatus(option.value)}
                       className={`p-4 rounded-xl border-2 transition-all transform hover:scale-[1.02] ${
                         isSelected
                           ? `${option.borderColor} ${option.bgColor} ring-2 ring-offset-2 ring-orange-400`

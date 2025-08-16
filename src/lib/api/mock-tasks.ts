@@ -5,7 +5,7 @@ import {
   UpdateTaskDto,
 } from "@/types/task";
 
-let mockTasks: Task[] = [
+const mockTasks: Task[] = [
   {
     id: "1",
     title: "Complete project documentation",
@@ -101,7 +101,7 @@ export const mockTaskApi = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    mockTasks.unshift(newTask); // Add to beginning
+    mockTasks.unshift(newTask);
     return newTask;
   },
 
