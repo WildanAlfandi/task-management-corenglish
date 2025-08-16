@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { mockTaskApi as taskApi } from "@/lib/api/mock-tasks";
-import Button from "@/components/ui/Button";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { ArrowLeft, FileText, AlignLeft, Sparkles } from "lucide-react";
@@ -31,7 +30,7 @@ export default function CreateTaskPage() {
         router.push("/");
       }, 100);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to create task");
     },
   });
